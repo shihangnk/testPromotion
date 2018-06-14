@@ -10,14 +10,16 @@ namespace TestPromotion
 {
     public class ServiceCaller
     {
-        const string _contentType = "application/json";
+        const string ContentType = "application/json";
 
         public static string Invoke(string method, string uri, string body)
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(uri);
-            client.Timeout = new TimeSpan(0, 0, 90);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(_contentType));
+            var client = new HttpClient()
+            {
+                BaseAddress = new Uri(uri),
+                Timeout = new TimeSpan(0,0,90)
+            };
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(ContentType));
             client.DefaultRequestHeaders.Add("Authorization", "Bearer " + getToken().Result);
 
             // You get the following exception when trying to set the "Content-Type" header like this:
@@ -34,24 +36,18 @@ namespace TestPromotion
                     break;
                 case "POST":
                     {
-                        // Construct an HttpContent from a StringContent
-                        HttpContent _Body = new StringContent(body);
-                        // and add the header to this object instance
-                        // optional: add a formatter option to it as well
-                        _Body.Headers.ContentType = new MediaTypeHeaderValue(_contentType);
+                        HttpContent httpContent = new StringContent(body);
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
                         // synchronous request without the need for .ContinueWith() or await
-                        response = client.PostAsync(uri, _Body).Result;
+                        response = client.PostAsync(uri, httpContent).Result;
                     }
                     break;
                 case "PUT":
                     {
-                        // Construct an HttpContent from a StringContent
-                        HttpContent _Body = new StringContent(body);
-                        // and add the header to this object instance
-                        // optional: add a formatter option to it as well
-                        _Body.Headers.ContentType = new MediaTypeHeaderValue(_contentType);
+                        HttpContent httpContent = new StringContent(body);
+                        httpContent.Headers.ContentType = new MediaTypeHeaderValue(ContentType);
                         // synchronous request without the need for .ContinueWith() or await
-                        response = client.PutAsync(uri, _Body).Result;
+                        response = client.PutAsync(uri, httpContent).Result;
                     }
                     break;
                 case "DELETE":
@@ -67,7 +63,6 @@ namespace TestPromotion
 
             return content;
         }
-
 
         private static string _token;
         async static Task<String> getToken()
