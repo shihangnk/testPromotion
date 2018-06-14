@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TestPromotion.Model;
 
 namespace TestPromotion
 {
@@ -13,6 +17,8 @@ namespace TestPromotion
     public class PromotionTest
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PromotionTest));
+        private const string url = "http://localhost:61284/v1/Companies(272002)/promotions";
+
 
         [TestMethod]
         public void TestMethod1()
@@ -22,16 +28,46 @@ namespace TestPromotion
 
             Logger.Info("................................. this is log4net");
 
+            ClearPromotion();
 
-            var promotions = getPromotions();
 
-            Debug.WriteLine("......." + promotions.Result);
-//            Assert.AreSame("aaaa", promotions.Result);
+
+//            var promotions = getPromotions();
+
+   //         Debug.WriteLine("......." + promotions.Result);
+////            Assert.AreSame("aaaa", promotions.Result);
 
 
             var token = getToken();
             Trace.WriteLine(".................. "+token.Result);
         }
+
+        private Promotion CreatePromotion(Promotion promotion)
+        {
+            string ret = ServiceCaller.Invoke("CREATE", url, JsonConvert.SerializeObject(promotion));
+            return JsonConvert.DeserializeObject<Promotion>(ret);
+        }
+
+        private void ClearPromotion()
+        {
+            List<Promotion> promotions = GetPromotions();
+            Assert.IsTrue(GetPromotions().Count>0, "Get all promotions");
+            foreach (var promotion in promotions)
+            {
+                ServiceCaller.Invoke("DELETE", $"{url}({promotion.Id})", "");
+            }
+            Assert.IsTrue(GetPromotions().Count==0, "All promtions are removed");
+        }
+
+        private List<Promotion> GetPromotions()
+        {
+            var str = ServiceCaller.Invoke("GET", url, "");
+            Debug.WriteLine("......." + str);
+
+            List<Promotion> promotions = JsonConvert.DeserializeObject<List<Promotion>>(str);
+            return promotions;
+        }
+
 
         async Task<string> getPromotions()
         {
@@ -40,27 +76,28 @@ namespace TestPromotion
 
         async Task<string> getPromotionsAsync()
         {
-
-            // ... Target page.
-            string page = "http://en.wikipedia.org/";
-
-            // ... Use HttpClient.
-            using (HttpClient client = new HttpClient())
-            using (HttpResponseMessage response = await client.GetAsync(page))
-            using (HttpContent content = response.Content)
             {
-                // ... Read the string.
-                string result = await content.ReadAsStringAsync();
+                // ... Target page.
+                string page = "http://en.wikipedia.org/";
 
-                // ... Display the result.
-                if (result != null &&
-                    result.Length >= 50)
+                // ... Use HttpClient.
+                using (HttpClient client = new HttpClient())
+                using (HttpResponseMessage response = await client.GetAsync(page))
+                using (HttpContent content = response.Content)
                 {
-                    Console.WriteLine(result.Substring(0, 50) + "...");
+                    // ... Read the string.
+                    string result = await content.ReadAsStringAsync();
+
+                    // ... Display the result.
+                    if (result != null &&
+                        result.Length >= 50)
+                    {
+                        Console.WriteLine(result.Substring(0, 50) + "...");
+                    }
                 }
             }
 
-            return "aaaaa";
+          return "aaaaa";
         }
 
         private static string _token;

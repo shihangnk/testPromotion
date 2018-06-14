@@ -69,8 +69,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Promotion.cs" />
     <Compile Include="PromotionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceCaller.cs" />
     <Compile Include="TestData.cs" />
   </ItemGroup>
   <ItemGroup>
