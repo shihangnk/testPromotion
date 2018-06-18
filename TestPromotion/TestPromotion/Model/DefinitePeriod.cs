@@ -8,6 +8,6 @@ namespace TestPromotion.Model
 {
     public class DefinitePeriod : PeriodBase
     {
-        private IEnumerable<DateRange> DateRanges;
+        public IEnumerable<DateRange> DateRanges;
     }
 }

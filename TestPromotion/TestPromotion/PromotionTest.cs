@@ -28,23 +28,70 @@ namespace TestPromotion
 
             Logger.Info("................................. this is log4net");
 
-            ClearPromotion();
+ //           ClearPromotion();
 
+            var prom1 = new Promotion()
+            {
+                Name = "Prom1",
+                Period = new DefinitePeriod()
+                {
+                    Tag = "Definite",
+                    DateRanges = new List<DateRange> {
+                        new DateRange()
+                        {
+                            StartDate = new DateTime(2018,05, 01, 1, 10, 30),
+                            EndDate = new DateTime(2018,05, 10, 1, 10, 30)
+                        }
+                    }
+                },
+                Status = "Active",
+                Condition = new Condition
+                {
+                    MatchAll = new MatchAll
+                    {
+                        Products = new ProductsClassificationsAndCategories
+                        {
+                            Tag = "ProductsClassificationsAndCategories",
+                            Products = new List<Guid>{ Guid.NewGuid(), Guid.NewGuid() },
+                            Classifications = new List<int> {100, 200, 300},
+                            Categories = new List<int> { 400, 500, 600}
+                        },
+                        Locations = new Locations
+                        {
+                            Tag = "All"
+                        }
 
+                    },
+                    Customers = new Customers
+                    {
+                        Tag = "All"
+                    }
+                },
+                Rule = new Rule
+                {
+                    Tag = "MatchedLineItems",
+                    Discount = new Discount
+                    {
+                        Tag = "Percentage",
+                        Percentage = 10
+                    }
+                }
+            };
+            Promotion p1 = CreatePromotion(prom1);
+
+            Debug.WriteLine(".............. p1 " + p1.Id);
 
 //            var promotions = getPromotions();
 
-   //         Debug.WriteLine("......." + promotions.Result);
+            //         Debug.WriteLine("......." + promotions.Result);
 ////            Assert.AreSame("aaaa", promotions.Result);
 
 
-            var token = getToken();
-            Trace.WriteLine(".................. "+token.Result);
         }
 
         private Promotion CreatePromotion(Promotion promotion)
         {
-            string ret = ServiceCaller.Invoke("CREATE", url, JsonConvert.SerializeObject(promotion));
+            string ret = ServiceCaller.Invoke("POST", url, JsonConvert.SerializeObject(promotion));
             return JsonConvert.DeserializeObject<Promotion>(ret);
         }
 
@@ -56,7 +103,7 @@ namespace TestPromotion
             {
                 ServiceCaller.Invoke("DELETE", $"{url}({promotion.Id})", "");
             }
-            Assert.IsTrue(GetPromotions().Count==0, "All promtions are removed");
+ //           Assert.IsTrue(GetPromotions().Count==0, "All promtions are removed");
         }
 
         private List<Promotion> GetPromotions()
@@ -69,75 +116,6 @@ namespace TestPromotion
         }
 
 
-        async Task<string> getPromotions()
-        {
-            return await getPromotionsAsync();
-        }
-
-        async Task<string> getPromotionsAsync()
-        {
-            {
-                // ... Target page.
-                string page = "http://en.wikipedia.org/";
-
-                // ... Use HttpClient.
-                using (HttpClient client = new HttpClient())
-                using (HttpResponseMessage response = await client.GetAsync(page))
-                using (HttpContent content = response.Content)
-                {
-                    // ... Read the string.
-                    string result = await content.ReadAsStringAsync();
-
-                    // ... Display the result.
-                    if (result != null &&
-                        result.Length >= 50)
-                    {
-                        Console.WriteLine(result.Substring(0, 50) + "...");
-                    }
-                }
-            }
-
-          return "aaaaa";
-        }
-
-        private static string _token;
-        async Task<String> getToken()
-        {
-            return await getTokenAsync();
-        }
-
-        async static Task<string> getTokenAsync()
-        {
-            if (_token != null)
-            {
-                return _token;
-            }
-
-            string accountEndpoint = "https://accountsint.iqmetrix.net/v1/oauth2/token";
-            string resultContent;
-
-            using (var client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(accountEndpoint);
-                var content = new FormUrlEncodedContent(new[]
-                {
-                    new KeyValuePair<string, string>("grant_type", "password"),
-                    new KeyValuePair<string, string>("username", TestData.userName),
-                    new KeyValuePair<string, string>("password", TestData.password),
-                    new KeyValuePair<string, string>("client_id", "iQPOS"),
-                    new KeyValuePair<string, string>("client_secret", "FXSDWCy3qYXUgXnpP9uRAhG4")
-                });
-                var result = await client.PostAsync("", content);
-                resultContent = await result.Content.ReadAsStringAsync();
-                Debug.WriteLine(resultContent);
-            }
-
-            JObject jobject = JObject.Parse(resultContent);
-            _token = jobject.GetValue("access_token").ToString();
-
-            Debug.WriteLine("token................."+_token);
-            return _token;
-        }
     }
 
 }

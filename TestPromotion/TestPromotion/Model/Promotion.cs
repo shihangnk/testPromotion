@@ -9,6 +9,6 @@ namespace TestPromotion.Model
         public string Status;
         public PeriodBase Period;
         public Condition Condition;
-        public Rule Ruel;
+        public Rule Rule;
     }
 }

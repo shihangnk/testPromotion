@@ -2,6 +2,7 @@
 {
     public class Condition
     {
-        
+        public MatchAll MatchAll;
+        public Customers Customers;
     }
 }
