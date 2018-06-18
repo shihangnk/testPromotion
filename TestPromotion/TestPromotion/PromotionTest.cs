@@ -17,66 +17,17 @@ namespace TestPromotion
     public class PromotionTest
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PromotionTest));
-        private const string url = "http://localhost:61284/v1/Companies(272002)/promotions";
-
+//      private const string url = "http://localhost:61284/v1/Companies(272002)/promotions";
+        private const string _url = "https://apiint.iqmetrix.net/pospromotions/v1/companies(272002)/promotions";
 
         [TestMethod]
         public void TestMethod1()
         {
-            Trace.WriteLine("........................................Trace Trace the World");
-            Debug.WriteLine(".....................................Debug Debug WOrld");
+            Debug.WriteLine("..................................... step 1");
 
-            Logger.Info("................................. this is log4net");
+            ClearPromotion();
 
- //           ClearPromotion();
-
-            var prom1 = new Promotion()
-            {
-                Name = "Prom1",
-                Period = new DefinitePeriod()
-                {
-                    Tag = "Definite",
-                    DateRanges = new List<DateRange> {
-                        new DateRange()
-                        {
-                            StartDate = new DateTime(2018,05, 01, 1, 10, 30),
-                            EndDate = new DateTime(2018,05, 10, 1, 10, 30)
-                        }
-                    }
-                },
-                Status = "Active",
-                Condition = new Condition
-                {
-                    MatchAll = new MatchAll
-                    {
-                        Products = new ProductsClassificationsAndCategories
-                        {
-                            Tag = "ProductsClassificationsAndCategories",
-                            Products = new List<Guid>{ Guid.NewGuid(), Guid.NewGuid() },
-                            Classifications = new List<int> {100, 200, 300},
-                            Categories = new List<int> { 400, 500, 600}
-                        },
-                        Locations = new Locations
-                        {
-                            Tag = "All"
-                        }
-
-                    },
-                    Customers = new Customers
-                    {
-                        Tag = "All"
-                    }
-                },
-                Rule = new Rule
-                {
-                    Tag = "MatchedLineItems",
-                    Discount = new Discount
-                    {
-                        Tag = "Percentage",
-                        Percentage = 10
-                    }
-                }
-            };
+            var prom1 = TestData.GetAPromotionObject();
             Promotion p1 = CreatePromotion(prom1);
 
             Debug.WriteLine(".............. p1 " + p1.Id);
@@ -91,7 +42,7 @@ namespace TestPromotion
 
         private Promotion CreatePromotion(Promotion promotion)
         {
-            string ret = ServiceCaller.Invoke("POST", url, JsonConvert.SerializeObject(promotion));
+            string ret = ServiceCaller.Invoke("POST", _url, JsonConvert.SerializeObject(promotion));
             return JsonConvert.DeserializeObject<Promotion>(ret);
         }
 
@@ -101,14 +52,14 @@ namespace TestPromotion
             Assert.IsTrue(GetPromotions().Count>0, "Get all promotions");
             foreach (var promotion in promotions)
             {
-                ServiceCaller.Invoke("DELETE", $"{url}({promotion.Id})", "");
+                ServiceCaller.Invoke("DELETE", $"{_url}({promotion.Id})", "");
             }
- //           Assert.IsTrue(GetPromotions().Count==0, "All promtions are removed");
+            Assert.IsTrue(GetPromotions().Count==0, "All promtions are removed");
         }
 
         private List<Promotion> GetPromotions()
         {
-            var str = ServiceCaller.Invoke("GET", url, "");
+            var str = ServiceCaller.Invoke("GET", _url, "");
             Debug.WriteLine("......." + str);
 
             List<Promotion> promotions = JsonConvert.DeserializeObject<List<Promotion>>(str);
@@ -116,6 +67,7 @@ namespace TestPromotion
         }
 
 
+        
     }
 
 }

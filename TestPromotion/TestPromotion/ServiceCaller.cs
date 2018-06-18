@@ -14,6 +14,7 @@ namespace TestPromotion
 
         public static string Invoke(string method, string uri, string body)
         {
+            Debug.WriteLine($"............{method} uri {uri}");
             var client = new HttpClient()
             {
                 BaseAddress = new Uri(uri),
@@ -30,7 +31,6 @@ namespace TestPromotion
             switch (method.ToUpper())
             {
                 case "GET":
-                case "HEAD":
                     // synchronous request without the need for .ContinueWith() or await
                     response = client.GetAsync(uri).Result;
                     break;
@@ -60,7 +60,7 @@ namespace TestPromotion
             response.EnsureSuccessStatusCode();
             // get the rest/content of the response in a synchronous way
             string content = response.Content.ReadAsStringAsync().Result;
-
+            Debug.WriteLine("............response [" + content + "]");
             return content;
         }
 

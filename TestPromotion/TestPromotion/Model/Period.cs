@@ -6,8 +6,13 @@ using System.Threading.Tasks;
 
 namespace TestPromotion.Model
 {
-    public class DefinitePeriod : PeriodBase
+    public class Period
     {
+        public string Tag;
         public IEnumerable<DateRange> DateRanges;
+        public PatternBase Pattern;
+        public TimeSchedule TimeScheudle;
+        public DateRange EffectiveDateRange;
+
     }
 }

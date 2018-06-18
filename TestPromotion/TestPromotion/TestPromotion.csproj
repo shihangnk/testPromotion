@@ -72,16 +72,14 @@
     <Compile Include="Model\Condition.cs" />
     <Compile Include="Model\Customers.cs" />
     <Compile Include="Model\DateRange.cs" />
-    <Compile Include="Model\DefinitePeriod.cs" />
     <Compile Include="Model\Discount.cs" />
     <Compile Include="Model\Locations.cs" />
     <Compile Include="Model\MatchAll.cs" />
     <Compile Include="Model\MonthlyPatter.cs" />
     <Compile Include="Model\PatternBase.cs" />
-    <Compile Include="Model\PeriodBase.cs" />
+    <Compile Include="Model\Period.cs" />
     <Compile Include="Model\ProductsClassificationsAndCategories.cs" />
     <Compile Include="Model\Promotion.cs" />
-    <Compile Include="Model\RecurrentPeriod.cs" />
     <Compile Include="Model\Rule.cs" />
     <Compile Include="Model\TimeSchedule.cs" />
     <Compile Include="Model\WeeklyPattern.cs" />

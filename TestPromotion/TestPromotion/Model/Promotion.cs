@@ -7,7 +7,7 @@ namespace TestPromotion.Model
         public Guid Id;
         public string Name;
         public string Status;
-        public PeriodBase Period;
+        public Period Period;
         public Condition Condition;
         public Rule Rule;
     }
