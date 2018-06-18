@@ -38,6 +38,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="IQ.Platform.PosPromotions.Model">
+      <HintPath>libs\IQ.Platform.PosPromotions.Model.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -69,20 +72,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Condition.cs" />
-    <Compile Include="Model\Customers.cs" />
-    <Compile Include="Model\DateRange.cs" />
-    <Compile Include="Model\Discount.cs" />
-    <Compile Include="Model\Locations.cs" />
-    <Compile Include="Model\MatchAll.cs" />
-    <Compile Include="Model\MonthlyPatter.cs" />
-    <Compile Include="Model\PatternBase.cs" />
-    <Compile Include="Model\Period.cs" />
-    <Compile Include="Model\ProductsClassificationsAndCategories.cs" />
-    <Compile Include="Model\Promotion.cs" />
-    <Compile Include="Model\Rule.cs" />
-    <Compile Include="Model\TimeSchedule.cs" />
-    <Compile Include="Model\WeeklyPattern.cs" />
     <Compile Include="PromotionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceCaller.cs" />

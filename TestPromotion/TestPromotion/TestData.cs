@@ -1,6 +1,12 @@
-﻿using System;
+﻿using IQ.Platform.PosPromotions.Model;
+using IQ.Platform.PosPromotions.Model.Types.Conditions;
+using IQ.Platform.PosPromotions.Model.Types.Conditions.ApplicableTo;
+using IQ.Platform.PosPromotions.Model.Types.Conditions.Customer;
+using IQ.Platform.PosPromotions.Model.Types.Conditions.Period;
+using IQ.Platform.PosPromotions.Model.Types.Discounts;
+using IQ.Platform.PosPromotions.Model.Types.Rules;
+using System;
 using System.Collections.Generic;
-using TestPromotion.Model;
 
 namespace TestPromotion
 {
@@ -14,9 +20,8 @@ namespace TestPromotion
             return new Promotion()
             {
                 Name = "Prom1",
-                Period = new Period()
+                Period = new Definite()
                 {
-                    Tag = "Definite",
                     DateRanges = new List<DateRange> {
                         new DateRange()
                         {
@@ -28,32 +33,22 @@ namespace TestPromotion
                 Status = "Active",
                 Condition = new Condition
                 {
-                    MatchAll = new MatchAll
+                    MatchAll = new ApplicableTo
                     {
                         Products = new ProductsClassificationsAndCategories
                         {
-                            Tag = "ProductsClassificationsAndCategories",
                             Products = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() },
                             Classifications = new List<int> { 100, 200, 300 },
                             Categories = new List<int> { 400, 500, 600 }
                         },
-                        Locations = new Locations
-                        {
-                            Tag = "All"
-                        }
-
+                        Locations = new AllLocations(),
                     },
-                    Customers = new Customers
-                    {
-                        Tag = "All"
-                    }
+                    Customers = new AllCustomers()
                 },
-                Rule = new Rule
+                Rule = new MatchedLineItems
                 {
-                    Tag = "MatchedLineItems",
-                    Discount = new Discount
+                    Discount = new PercentageDiscount
                     {
-                        Tag = "Percentage",
                         Percentage = 10
                     }
                 }

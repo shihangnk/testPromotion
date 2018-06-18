@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using IQ.Platform.PosPromotions.Model;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using TestPromotion.Model;
 
 namespace TestPromotion
 {
@@ -33,6 +33,8 @@ namespace TestPromotion
             Promotion p1 = CreatePromotion(prom1);
 
             Debug.WriteLine(".............. p1 " + p1.Id);
+
+
 
 //            var promotions = getPromotions();
 
