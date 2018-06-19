@@ -17,18 +17,23 @@ namespace TestPromotion
 
         public static Promotion GetAPromotionObject()
         {
-            return new Promotion()
-            {
-                Name = "Prom1",
-                Period = new Definite()
-                {
-                    DateRanges = new List<DateRange> {
+            return GetAPromotionObject(new List<DateRange> {
                         new DateRange()
                         {
                             StartDate = new DateTime(2019,05, 01, 1, 10, 30),
                             EndDate = new DateTime(2019,05, 10, 1, 10, 30)
                         }
-                    }
+                    });
+        }
+
+        public static Promotion GetAPromotionObject(List<DateRange> dateRanges)
+        {
+            return new Promotion()
+            {
+                Name = "Prom1",
+                Period = new Definite()
+                {
+                    DateRanges = dateRanges
                 },
                 Status = "Active",
                 Condition = new Condition

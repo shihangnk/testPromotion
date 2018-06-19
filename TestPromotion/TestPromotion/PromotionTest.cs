@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using IQ.Platform.PosPromotions.Model;
+using IQ.Platform.PosPromotions.Model.Types.ActivePromotion;
+using IQ.Platform.PosPromotions.Model.Types.Conditions.Period;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -17,10 +20,10 @@ namespace TestPromotion
     public class PromotionTest
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PromotionTest));
-        //      private const string url = "http://localhost:61284/v1/Companies(272002)/promotions";
+        //      private const string _urlBase = "http://localhost:61284/v1/Companies(272002)";
         private const string _urlBase = "https://apiint.iqmetrix.net/pospromotions/v1/companies(272002)";
         private const string _url = _urlBase+"/promotions";
-        private const string _getActivePromotions = _urlBase + "/entities(337730)/ActivePromotionsForDays(2018-05-14, 30)";
+        private const string _getActivePromotions = _urlBase + "/entities(337730)/ActivePromotionsForDays";
 
         [TestMethod]
         public void TestMethod1()
@@ -29,19 +32,49 @@ namespace TestPromotion
 
             ClearPromotion();
 
-            var prom1 = TestData.GetAPromotionObject();
+            var prom1 = TestData.GetAPromotionObject(
+                new List<DateRange> {
+                        new DateRange()
+                        {
+                            StartDate = new DateTime(2018, 05, 01, 1, 10, 20),
+                            EndDate = new DateTime(2018, 05, 10, 15, 30, 40)
+                        }
+                    });
             Promotion p1 = CreatePromotion(prom1);
 
             Debug.WriteLine(".............. p1 " + p1.Id);
 
+            string id = "2018-05-10, 30";
+            var actual = GetActivePromotions(id);
 
+            var expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    new ActivePromotionsForDay
+                    {
+                        Date = new DateTime(2018, 05, 10),
+                        PromotionIdsAndTimes = new List<ActivePromotionIdsAndTimes>
+                        {
+                            new ActivePromotionIdsAndTimes
+                            {
+                                PromotionId = p1.Id,
+                                Times = new List<TimeSchedule>
+                                {
+                                    new TimeSchedule
+                                    {
+                                        StartTime = new TimeSpan(0, 0, 0),
+                                        EndTime = new TimeSpan(15, 30, 40)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
 
-//            var promotions = getPromotions();
-
-            //         Debug.WriteLine("......." + promotions.Result);
-////            Assert.AreSame("aaaa", promotions.Result);
-
-
+            Utilities.Compare(expect, actual);
         }
 
         private Promotion CreatePromotion(Promotion promotion)
@@ -67,8 +100,12 @@ namespace TestPromotion
             return promotions;
         }
 
-
-        
+        private ActivePromotionsForNextDays GetActivePromotions(string id)
+        {
+            var str = ServiceCaller.Invoke("GET", $"{_getActivePromotions}({id})", "");
+            ActivePromotionsForNextDays promotions = JsonConvert.DeserializeObject<ActivePromotionsForNextDays>(str);
+            return promotions;
+        }
     }
 
 }
