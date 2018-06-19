@@ -71,7 +71,8 @@ namespace TestPromotion
                             }
                         }
                     }
-                }
+                },
+                Promotions = new List<ActivePromotion>()
             };
 
             Utilities.Compare(expect, actual);
