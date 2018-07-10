@@ -7,6 +7,7 @@ using IQ.Platform.PosPromotions.Model.Types.Discounts;
 using IQ.Platform.PosPromotions.Model.Types.Rules;
 using System;
 using System.Collections.Generic;
+using IQ.Platform.PosPromotions.Model.Types.ActivePromotion;
 
 namespace TestPromotion
 {
@@ -59,5 +60,18 @@ namespace TestPromotion
                 }
             };
         }
+
+        public static ActivePromotionsForNextDays GetEmptyActivePromotionsForNextDays(string id)
+        {
+            var expect = new ActivePromotionsForNextDays()
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>(),
+                Promotions = new List<ActivePromotion>()
+            };
+            return expect;
+        }
+
+
     }
 }
