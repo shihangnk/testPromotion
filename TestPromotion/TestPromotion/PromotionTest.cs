@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using IQ.Platform.PosPromotions.Model;
 using IQ.Platform.PosPromotions.Model.Types.ActivePromotion;
 using IQ.Platform.PosPromotions.Model.Types.Conditions.Period;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace TestPromotion
 {
@@ -248,6 +242,20 @@ namespace TestPromotion
             id = "2018-05-31, 1";
             actual = GetActivePromotions(id);
             expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+
+            // ----------- the second start date, no promotion
+            id = "2018-05-31, 2";
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(p1.Id, new DateTime(2018, 06, 01), new TimeSpan(12, 1, 2), new TimeSpan(23, 59, 59))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
             Utilities.Compare(expect, actual);
 
             // ----------- the second start date, no promotion
