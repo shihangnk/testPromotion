@@ -72,7 +72,7 @@ namespace TestPromotion
             return expect;
         }
 
-        public static ActivePromotionsForDay GetActivePromotionsForDay(Guid id, DateTime date, TimeSpan startTime, TimeSpan endTime)
+        public static ActivePromotionsForDay GetActivePromotionsForDay(DateTime date, Guid id, TimeSpan startTime, TimeSpan endTime)
         {
             return new ActivePromotionsForDay
             {
@@ -91,6 +91,42 @@ namespace TestPromotion
                             }
                         }
                     }
+                }
+            };
+        }
+
+        public static ActivePromotionsForDay GetActivePromotionsForDay(DateTime date, Guid id1, TimeSpan startTime1, TimeSpan endTime1, Guid id2, TimeSpan startTime2, TimeSpan endTime2)
+        {
+            return new ActivePromotionsForDay
+            {
+                Date = date,
+                PromotionIdsAndTimes = new List<ActivePromotionIdsAndTimes>
+                {
+                    new ActivePromotionIdsAndTimes
+                    {
+                        PromotionId = id1,
+                        Times = new List<TimeSchedule>
+                        {
+                            new TimeSchedule
+                            {
+                                StartTime = startTime1,
+                                EndTime = endTime1
+                            }
+                        }
+                    },
+                    new ActivePromotionIdsAndTimes
+                    {
+                        PromotionId = id2,
+                        Times = new List<TimeSchedule>
+                        {
+                            new TimeSchedule
+                            {
+                                StartTime = startTime2,
+                                EndTime = endTime2
+                            }
+                        }
+                    }
+
                 }
             };
         }
