@@ -61,6 +61,18 @@ namespace TestPromotion
             };
         }
 
+        public static Promotion GetRecurrentPromotionObject(BasePattern pattern, TimeSchedule timeSchedule, DateRange effectiveDateRange)
+        {
+            var promotion = GetAPromotionObject(null);
+            promotion.Period = new Recurrent
+            {
+                Pattern = pattern,
+                TimeSchedule = timeSchedule,
+                EffectiveDateRange = effectiveDateRange
+            };
+            return promotion;
+        }
+
         public static ActivePromotionsForNextDays GetEmptyActivePromotionsForNextDays(string id)
         {
             var expect = new ActivePromotionsForNextDays()
