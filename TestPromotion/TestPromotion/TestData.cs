@@ -16,18 +16,7 @@ namespace TestPromotion
         public const string userName = "admin@automatedtestingcova.com";
         public const string password = "Abcd1234";
 
-        public static Promotion GetAPromotionObject()
-        {
-            return GetAPromotionObject(new List<DateRange> {
-                        new DateRange()
-                        {
-                            StartDate = new DateTime(2019,05, 01, 1, 10, 30),
-                            EndDate = new DateTime(2019,05, 10, 1, 10, 30)
-                        }
-                    });
-        }
-
-        public static Promotion GetAPromotionObject(List<DateRange> dateRanges)
+        public static Promotion BuildDefinitePromotion(List<DateRange> dateRanges)
         {
             return new Promotion()
             {
@@ -61,9 +50,9 @@ namespace TestPromotion
             };
         }
 
-        public static Promotion GetRecurrentPromotionObject(BasePattern pattern, TimeSchedule timeSchedule, DateRange effectiveDateRange)
+        public static Promotion BuildRecurrentPromotion(BasePattern pattern, TimeSchedule timeSchedule, DateRange effectiveDateRange)
         {
-            var promotion = GetAPromotionObject(null);
+            var promotion = BuildDefinitePromotion(null);
             promotion.Period = new Recurrent
             {
                 Pattern = pattern,

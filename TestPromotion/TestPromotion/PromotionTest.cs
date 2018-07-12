@@ -27,7 +27,7 @@ namespace TestPromotion
 
             ClearPromotion();
 
-            var prom1 = TestData.GetAPromotionObject(
+            var prom1 = TestData.BuildDefinitePromotion(
                 new List<DateRange> {
                         new DateRange()
                         {
@@ -117,7 +117,7 @@ namespace TestPromotion
 
             ClearPromotion();
 
-            var prom1 = TestData.GetAPromotionObject(
+            var prom1 = TestData.BuildDefinitePromotion(
                 new List<DateRange> {
                     new DateRange()
                     {
@@ -274,7 +274,7 @@ namespace TestPromotion
 
             ClearPromotion();
 
-            var prom1 = TestData.GetAPromotionObject(
+            var prom1 = TestData.BuildDefinitePromotion(
                 new List<DateRange> {
                     new DateRange()
                     {
@@ -284,7 +284,7 @@ namespace TestPromotion
                 });
             Promotion p1 = CreatePromotion(prom1);
 
-            var prom2 = TestData.GetAPromotionObject(
+            var prom2 = TestData.BuildDefinitePromotion(
                 new List<DateRange> {
                     new DateRange()
                     {
@@ -436,7 +436,7 @@ namespace TestPromotion
 
             ClearPromotion();
 
-            var prom1 = TestData.GetAPromotionObject(
+            var prom1 = TestData.BuildDefinitePromotion(
                 new List<DateRange> {
                     new DateRange()
                     {
@@ -451,7 +451,7 @@ namespace TestPromotion
                 });
             Promotion p1 = CreatePromotion(prom1);
 
-            var prom2 = TestData.GetAPromotionObject(
+            var prom2 = TestData.BuildDefinitePromotion(
                 new List<DateRange> {
                     new DateRange()
                     {
@@ -483,7 +483,7 @@ namespace TestPromotion
         {
             ClearPromotion();
 
-            var prom1 = TestData.GetRecurrentPromotionObject(
+            var prom1 = TestData.BuildRecurrentPromotion(
                 new Weekly
                 {
                     DaysOfTheWeek = new List<DayOfWeek>{Monday, Friday}
@@ -558,7 +558,7 @@ namespace TestPromotion
         {
             ClearPromotion();
 
-            var prom1 = TestData.GetRecurrentPromotionObject(
+            var prom1 = TestData.BuildRecurrentPromotion(
                 new Weekly
                 {
                     DaysOfTheWeek = new List<DayOfWeek> { Monday, Friday }
@@ -576,7 +576,7 @@ namespace TestPromotion
             );
             Promotion p1 = CreatePromotion(prom1);
 
-            var prom2 = TestData.GetRecurrentPromotionObject(
+            var prom2 = TestData.BuildRecurrentPromotion(
                 new Weekly
                 {
                     DaysOfTheWeek = new List<DayOfWeek> { Monday, Tuesday }
@@ -665,12 +665,166 @@ namespace TestPromotion
             Utilities.Compare(expect, actual);
         }
 
+        [Ignore]    // monthly is not implemented in service yet
         [TestMethod]
-        public void Test_06_MixedPromotions() { }
+        public void Test_07_OneMonthlyRecurrentPromotion()
+        {
+            ClearPromotion();
+
+            var prom1 = TestData.BuildRecurrentPromotion(
+                new Monthly
+                {
+                    DaysOfTheMonth = new List<int> { 2, 3, 5, 7, 11, 29 }
+                },
+                new TimeSchedule
+                {
+                    StartTime = new TimeSpan(10, 11, 12),
+                    EndTime = new TimeSpan(20, 21, 22)
+                },
+                new DateRange
+                {
+                    StartDate = new DateTime(2018, 05, 1, 10, 10, 20),
+                    EndDate = new DateTime(2018, 05, 31, 12, 13, 14)
+                }
+            );
+            Promotion p1 = CreatePromotion(prom1);
+
+            Debug.WriteLine(".............. p1 " + p1.Id);
+
+            //--------------------- earlier than start date -----------------
+            var id = "2018-04-20, 10";
+            var actual = GetActivePromotions(id);
+            var expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+
+            //--------------------- in date range, no promotion -----------------
+            id = "2018-05-01, 1";
+            actual = GetActivePromotions(id);
+            expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+
+            //--------------------- in date range, has one promotion -----------------
+            id = "2018-05-01, 2";
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 02), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
+            Utilities.Compare(expect, actual);
+
+            //--------------------- in date range, has more than one promotions -----------------
+            id = "2018-05-04, 14";
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 05), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 07), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 11), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
+            Utilities.Compare(expect, actual);
+
+            //--------------------- late than the last active promotion -----------------
+            id = "2018-05-30, 20";
+            actual = GetActivePromotions(id);
+            expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+        }
+
+        [Ignore]    // monthly is not implemented in service yet.
+        [TestMethod]
+        public void Test_08_TwoMonthlyRecurrentPromotions()
+        {
+        }
+
+        [TestMethod]
+        public void Test_09_MixedPromotions()
+        {
+            Debug.WriteLine("..................................... step 1");
+
+            ClearPromotion();
+            //------------ one definite + one recurrect -------------
+            var prom1 = TestData.BuildDefinitePromotion(
+                new List<DateRange> {
+                    new DateRange()
+                    {
+                        StartDate = new DateTime(2018, 05, 01, 1, 10, 20),
+                        EndDate = new DateTime(2018, 05, 10, 15, 30, 40)
+                    }
+                });
+            Promotion p1 = CreatePromotion(prom1);
+
+            var prom2 = TestData.BuildRecurrentPromotion(
+                new Weekly
+                {
+                    DaysOfTheWeek = new List<DayOfWeek> { Monday, Thursday }
+                },
+                new TimeSchedule
+                {
+                    StartTime = new TimeSpan(21, 30, 00),
+                    EndTime = new TimeSpan(22, 30, 00)
+                },
+                new DateRange
+                {
+                    StartDate = new DateTime(2018, 05, 10, 20, 10, 20),
+                    EndDate = new DateTime(2018, 06, 10, 12, 13, 14)
+                }
+            );
+            Promotion p2 = CreatePromotion(prom2);
+
+            Debug.WriteLine(".............. p1 " + p1.Id + "  p2 " + p2.Id);
+
+            // --------- earlier than start date, no active promotion ------
+            string id = "2018-04-10, 10";
+            var actual = GetActivePromotions(id);
+            var expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+
+            // ----------- across the start date, one active promotion -----------
+            id = "2018-04-30, 2";
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 01), p1.Id, new TimeSpan(1, 10, 20), new TimeSpan(23, 59, 59))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
+            Utilities.Compare(expect, actual);
+
+            // ----------- across the start date, one active promotion -----------
+            id = "2018-05-09, 10";
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 09), p1.Id, new TimeSpan(0, 0, 0), new TimeSpan(23, 59, 59)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 10), p1.Id, new TimeSpan(0, 0, 0), new TimeSpan(15, 30, 40), p2.Id, new TimeSpan(21, 30, 00), new TimeSpan(22, 30, 00)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 14), p2.Id, new TimeSpan(21, 30, 00), new TimeSpan(22, 30, 00)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 17), p2.Id, new TimeSpan(21, 30, 00), new TimeSpan(22, 30, 00))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
+            Utilities.Compare(expect, actual);
+
+        }
 
 
         [TestMethod]
-        public void Test_16_TestLocations() { }
+        public void Test_36_TestLocations() { }
 
 
         private Promotion CreatePromotion(Promotion promotion)
