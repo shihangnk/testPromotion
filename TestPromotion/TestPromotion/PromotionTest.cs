@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using IQ.Platform.PosPromotions.Model;
 using IQ.Platform.PosPromotions.Model.Types.ActivePromotion;
+using IQ.Platform.PosPromotions.Model.Types.Conditions;
+using IQ.Platform.PosPromotions.Model.Types.Conditions.ApplicableTo;
+using IQ.Platform.PosPromotions.Model.Types.Conditions.Customer;
 using IQ.Platform.PosPromotions.Model.Types.Conditions.Period;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -819,12 +822,72 @@ namespace TestPromotion
                 Promotions = new List<ActivePromotion>()
             };
             Utilities.Compare(expect, actual);
-
         }
 
-
         [TestMethod]
-        public void Test_36_TestLocations() { }
+        public void Test_10_TestLocations()
+        {
+            Debug.WriteLine("..................................... step 1");
+
+            // -------------- all locations -----------------
+            ClearPromotion();
+
+            var prom1 = TestData.BuildDefinitePromotion(
+                new List<DateRange> {
+                    new DateRange()
+                    {
+                        StartDate = new DateTime(2018, 05, 01, 1, 10, 20),
+                        EndDate = new DateTime(2018, 05, 10, 15, 30, 40)
+                    }
+                });
+
+            Promotion p1 = CreatePromotion(prom1);
+
+            string id = "2018-05-01, 1";
+            var actual = GetActivePromotions(id);
+            var expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 01), p1.Id, new TimeSpan(1, 10, 20), new TimeSpan(23, 59, 59))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
+            Utilities.Compare(expect, actual);
+
+            // --------------------- not my location ---------
+            ClearPromotion();
+            prom1.Condition.MatchAll.Locations = new Locations
+            {
+                LocationIds = new List<int> { 10000 }
+            };
+            p1 = CreatePromotion(prom1);
+
+            actual = GetActivePromotions(id);
+            expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+
+            // ---------------- my location --------------
+            ClearPromotion();
+            prom1.Condition.MatchAll.Locations = new Locations
+            {
+                LocationIds = new List<int> { 337730 }
+            };
+            p1 = CreatePromotion(prom1);
+
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 01), p1.Id, new TimeSpan(1, 10, 20), new TimeSpan(23, 59, 59))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
+            Utilities.Compare(expect, actual);
+        }
 
 
         private Promotion CreatePromotion(Promotion promotion)
