@@ -18,10 +18,10 @@ namespace TestPromotion
     public class PromotionTest
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PromotionTest));
-        private const string _urlBase = "http://localhost:61284/v1/Companies(272002)";
-    //    private const string _urlBase = "https://apiint.iqmetrix.net/pospromotions/v1/companies(272002)";
-        private const string _url = _urlBase+"/promotions";
-        private const string _getActivePromotions = _urlBase + "/entities(337730)/ActivePromotionsForDays";
+        private const string UrlBase = "http://localhost:61284/v1/Companies(272002)";
+    //    private const string UrlBase = "https://apiint.iqmetrix.net/pospromotions/v1/companies(272002)";
+        private const string Url = UrlBase+"/promotions";
+        private const string UrlGetActivePromotions = UrlBase + "/entities(337730)/ActivePromotionsForDays";
 
         [TestMethod]
         public void Test_01_DefinitePromotionWithOneDateRange()
@@ -892,7 +892,7 @@ namespace TestPromotion
 
         private Promotion CreatePromotion(Promotion promotion)
         {
-            string ret = ServiceCaller.Invoke("POST", _url, JsonConvert.SerializeObject(promotion));
+            string ret = ServiceCaller.Invoke("POST", Url, JsonConvert.SerializeObject(promotion));
             return JsonConvert.DeserializeObject<Promotion>(ret);
         }
 
@@ -901,21 +901,21 @@ namespace TestPromotion
             List<Promotion> promotions = GetPromotions();
             foreach (var promotion in promotions)
             {
-                ServiceCaller.Invoke("DELETE", $"{_url}({promotion.Id})", "");
+                ServiceCaller.Invoke("DELETE", $"{Url}({promotion.Id})", "");
             }
             Assert.IsTrue(GetPromotions().Count==0, "All promtions are removed");
         }
 
         private List<Promotion> GetPromotions()
         {
-            var str = ServiceCaller.Invoke("GET", _url, "");
+            var str = ServiceCaller.Invoke("GET", Url, "");
             List<Promotion> promotions = JsonConvert.DeserializeObject<List<Promotion>>(str);
             return promotions;
         }
 
         private ActivePromotionsForNextDays GetActivePromotions(string id)
         {
-            var str = ServiceCaller.Invoke("GET", $"{_getActivePromotions}({id})", "");
+            var str = ServiceCaller.Invoke("GET", $"{UrlGetActivePromotions}({id})", "");
             ActivePromotionsForNextDays promotions = JsonConvert.DeserializeObject<ActivePromotionsForNextDays>(str);
             return promotions;
         }
