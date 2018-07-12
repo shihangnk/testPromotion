@@ -501,32 +501,56 @@ namespace TestPromotion
             );
             Promotion p1 = CreatePromotion(prom1);
 
-            var prom2 = TestData.GetAPromotionObject(
-                new List<DateRange> {
-                    new DateRange()
-                    {
-                        StartDate = new DateTime(2018, 05, 15, 14, 01, 02),
-                        EndDate = new DateTime(2018, 06, 10, 18, 03, 04)
-                    }
-                });
-            Promotion p2 = CreatePromotion(prom2);
+            Debug.WriteLine(".............. p1 " + p1.Id);
 
-            Debug.WriteLine(".............. p1 " + p1.Id + "... p2 " + p2.Id);
-
-            string id = "2018-05-14, 3";
+            //--------------------- earlier than start date -----------------
+            var id = "2018-04-20, 10";
             var actual = GetActivePromotions(id);
-            var expect = new ActivePromotionsForNextDays
+            var expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+
+            //--------------------- in date range, no promotion -----------------
+            id = "2018-05-01, 3";
+            actual = GetActivePromotions(id);
+            expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
+
+            //--------------------- in date range, has one promotion -----------------
+            id = "2018-04-30, 7";
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
             {
                 Id = id,
                 ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
                 {
-                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 15), p1.Id, new TimeSpan(10, 10, 20), new TimeSpan(12, 13, 14), p2.Id, new TimeSpan(14, 01, 02), new TimeSpan(23, 59, 59)),
-                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 16), p2.Id, new TimeSpan(00, 00, 00), new TimeSpan(23, 59, 59))
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 04), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22))
                 },
                 Promotions = new List<ActivePromotion>()
             };
             Utilities.Compare(expect, actual);
 
+            //--------------------- in date range, has more than one promotions -----------------
+            id = "2018-05-04, 14";
+            actual = GetActivePromotions(id);
+            expect = new ActivePromotionsForNextDays
+            {
+                Id = id,
+                ApplicablePromotionsForDays = new List<ActivePromotionsForDay>
+                {
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 04), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 07), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 11), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22)),
+                    TestData.GetActivePromotionsForDay(new DateTime(2018, 05, 14), p1.Id, new TimeSpan(10, 11, 12), new TimeSpan(20, 21, 22))
+                },
+                Promotions = new List<ActivePromotion>()
+            };
+            Utilities.Compare(expect, actual);
+
+            //--------------------- late than the last active promotion -----------------
+            id = "2018-05-29, 20";
+            actual = GetActivePromotions(id);
+            expect = TestData.GetEmptyActivePromotionsForNextDays(id);
+            Utilities.Compare(expect, actual);
         }
 
         [TestMethod]
