@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IQ.Platform.PosPromotions.Model;
+using IQ.Platform.PosPromotions.Utilities.Mappers;
 
 namespace TestPromotion
 {
@@ -62,6 +64,12 @@ namespace TestPromotion
         public static void ComparePromotions(List<ActivePromotion> expect, List<ActivePromotion> actual)
         {
 
+        }
+
+        public static List<ActivePromotion> ConvertPromotionsToActivePromotions(List<Promotion> promotions)
+        {
+            var mapper = new ActivePromotionMapper(new ActiveConditionMapper(new ActiveApplicableToMapper()));
+            return promotions.Select(mapper.Map).ToList();
         }
 
     }
